@@ -1,0 +1,51 @@
+artikel_id,bezeichnung,spielauswirkungen,beschreibung,typ,preis,verfuegbar
+400000,Trank der Heilung,"(+50 HP,30)",Stellt 50 Lebenspunkte wieder her,spielgegenstand,100,true
+400001,Supertrank,"(+100 HP,20)",Heilt mehr als ein normaler Trank,spielgegenstand,200,true
+400002,Hypertrank,"(+200 HP,15)",Starke Heilung für deine Pokémon,spielgegenstand,300,true
+400003,Top-Genesung,"(+Vollständige Heilung,10)",Heilt alle Statusprobleme und füllt KP auf,spielgegenstand,500,true
+400004,Beleber,"(Wiederbelebung,5)",Belebt ein gefallenen Pokémon wieder,spielgegenstand,250,true
+400005,Pokéball,"(+1 Pokéball,1)",Wird verwendet um Pokémon zu fangen,spielgegenstand,50,true
+400006,Superball,"(+1 Superball,1)",Höhere Fangchance als Pokéball,spielgegenstand,100,true
+400007,Hyperball,"(+1 Hyperball,1)",Sehr hohe Fangchance,spielgegenstand,150,true
+400008,Meisterball,"(Fängt jedes Pokémon,1)",Garantiere Fänge,spielgegenstand,1000,false
+400009,Glücks-Ei,"(XP x2,30)",Erhöht EP-Gewinne für begrenzte Zeit,spielgegenstand,500,true
+400010,Modul-Lock,"(Lockmodul aktiviert,30)",Zieht Pokémon für 30 Minuten an,spielgegenstand,400,true
+400011,Rauch,"(Lockt Pokémon,20)",Erhöht Begegnungen für 20 Minuten,spielgegenstand,350,true
+400012,Brutmaschine,"(Schritte zählen,50)",Ermöglicht das Ausbrüten eines Eis,spielgegenstand,300,true
+400013,Premium-Kampfpass,"(+1 Kampfteilnahme,1)",Nutzt für spezielle Kämpfe,spielgegenstand,100,true
+400014,Pokémon T-Shirt,,Baumwoll-T-Shirt mit Pikachu-Aufdruck,merchandise,29.99,true
+400015,Pokémon Mütze,,Wintermütze mit Pokémon Logo,merchandise,15.99,true
+400016,Plüsch-Pikachu 30cm,,Kuscheltier für Fans,merchandise,24.99,true
+400017,Pokémon Tasse,,Keramiktasse mit Logo,merchandise,9.99,true
+400018,Poster-Set Kanto-Region,,3 Poster im Set (DIN A2),merchandise,12.99,false
+400019,Pokémon Rucksack,,Stylischer Alltagsrucksack,merchandise,39.99,true
+400020,1000 PokéMünzen,"(+1000 PokéMünzen,0)",Kleine Münzaufladung,digital,10.0,true
+400021,2500 PokéMünzen,"(+2500 PokéMünzen,0)",Standard Aufladung,digital,22.50,true
+400022,5500 PokéMünzen,"(+5500 PokéMünzen,0)",Bonus enthalten,digital,44.99,true
+400023,12000 PokéMünzen,"(+12000 PokéMünzen,0)",Gutes Angebot,digital,89.99,true
+400024,25000 PokéMünzen,"(+25000 PokéMünzen,0)",Bester Wert,digital,179.99,true
+400025,Monatsabo Basis,"(Zugang zu Events,0)",Enthält tägliche Boni,abonnement,4.99,true
+400026,Monatsabo Premium,"(+20% EP,0)",Extra Features enthalten,abonnement,8.99,true
+400027,Jahresabo Basis,,Preisvorteil über 12 Monate,abonnement,49.99,true
+400028,Jahresabo Premium,,Enthält exklusive Belohnungen,abonnement,89.99,true
+400029,Beerenmix,"(+Beeren im Inventar,1)",Beerenpaket für Trainer,spielgegenstand,150,true
+400030,Sinelbeere,"(Status: Schlaf entfernt,1)",Beere gegen Schlaf,spielgegenstand,50,true
+400031,Tsitrubeere,"(+33% HP,1)",Beere zur Heilung,spielgegenstand,120,true
+400032,Maronbeere,"(Status: Paralyse entfernt,1)",Beere gegen Paralyse,spielgegenstand,50,true
+400033,Lumibeere,"(Heilt alle Statusprobleme,1)",Seltene Beere,spielgegenstand,300,false
+400034,Beerenkorb 5er Pack,"(5 zufällige Beeren,5)",Mix verschiedener Beeren,spielgegenstand,200,true
+400035,Brutmaschinenpaket,"(3 Brutmaschinen,3)",Für häufige Brüter,spielgegenstand,750,true
+400036,Event-Ticket: Sommerfestival,"(Zugang zum Event,0)",Spezialevent-Ticket,spielgegenstand,1200,true
+400037,Event-Ticket: Halloween,"(Zugang zum Event,0)",Spezialevent mit Nachtpokémon,spielgegenstand,1200,false
+400038,Pokémon Sammelkarten-Set,,10 Karten pro Booster,merchandise,3.99,true
+400039,Trainer-Handschuhe,,Griffige Handschuhe für Fans,merchandise,16.99,true
+400040,Winterjacke mit Team Rocket Logo,,Limitierte Auflage,merchandise,79.99,false
+400041,Stickerbogen Starter-Pokémon,,20 Aufkleber,merchandise,4.99,true
+400042,Pokémon Kalender 2025,,Mit Illustrationen aus allen Regionen,merchandise,14.99,true
+400043,Ultra-Paket: Items + Münzen,"(+Items +5000 Münzen,0)",Bundle für Fortgeschrittene,spielgegenstand,5999,true
+400044,Power-Paket für Arenakämpfer,"(+Items +EP Boost,0)",Optimiert für PvP,spielgegenstand,4999,true
+400045,Trainerbox für Neueinsteiger,"(+Tränke +Bälle,0)",Perfekt für den Anfang,spielgegenstand,999,true
+400046,Aufkleberset legendäre Pokémon,,Sticker mit legendären Pokémon,merchandise,7.99,true
+400047,Figur: Glurak 15cm,,Detaillierte Sammelfigur,merchandise,34.99,true
+400048,Figurenset: Kanto-Starter,,3 Figuren im Set,merchandise,74.99,true
+400049,Pokémon Fanpaket,"(Mischpaket,0)",Zufällige Artikel aus allen Kategorien,merchandise,99.99,true
