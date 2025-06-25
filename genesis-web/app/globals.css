@@ -67,6 +67,22 @@
     --abonnement-900: 45 100% 20%;
     --abonnement-300: 45 100% 80%;
   }
+  body {
+    /* Hintergrundbild */
+    background-image:
+      /* halbtransparentes Weiß-Overlay */
+      linear-gradient(rgba(255, 255, 255, 0.329), rgba(255, 255, 255, 0.214)),
+      url('/background2.jpeg');
+     background-size: 100% 100%;
+    /* Oder Breite 100%, Höhe automatisch: */
+    /* background-size: 100% auto; */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+
+    /* Textfarbe beibehalten */
+    @apply text-foreground;
+  }
 }
 
 @layer base {

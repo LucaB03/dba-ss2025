@@ -10,7 +10,7 @@ type Artikel = {
   price: number;
   type: "digital" | "spielgegenstand" | "merchandise" | "abonnement";
   available: boolean;
-  effects: string;
+  effects: string | null;
 };
 
 export default function ShopPage() {
@@ -19,29 +19,30 @@ export default function ShopPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/artikel")
-      .then((res) => res.json())
-      .then((data: Artikel[]) => {
-        // nur verfügbare Artikel anzeigen
-        setItems(data.map((a) => ({
-          id: a.artikel_id,
-          name: a.bezeichnung,
-          description: a.beschreibung,
-          price: a.preis,
-          type: a.typ,
-          available: a.verfuegbar,
-          effects: a.spielauswirkungen ?? "",
-        })))
+    (async () => {
+      try {
+        const res = await fetch("/api/artikel");
+        if (!res.ok) {
+          console.error("API-Fehler:", res.status, await res.text());
+          return;
+        }
+        const data = (await res.json()) as Artikel[];
+        // Filter optional: nur verfügbare Artikel anzeigen
+        setItems(data);
+      } catch (err) {
+        console.error("Fetch-Error:", err);
+      } finally {
         setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Fehler beim Laden der Artikel:", err);
-        setLoading(false);
-      });
+      }
+    })();
   }, []);
 
   if (loading) {
     return <p className="p-4">Lade Artikel…</p>;
+  }
+
+  if (items.length === 0) {
+    return <p className="p-4">Keine Artikel gefunden.</p>;
   }
 
   const tabs = [
@@ -84,6 +85,7 @@ export default function ShopPage() {
       </div>
 
       <div className="mt-8">
+        {/* Tabs */}
         <div className="flex flex-wrap gap-2 mb-4">
           {tabs.map((tab) => (
             <button
@@ -100,18 +102,21 @@ export default function ShopPage() {
           ))}
         </div>
 
+        {/* Grid mit Boxen */}
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filteredItems.map((item) => (
             <div
               key={item.id}
-              className="bg-white border rounded-lg shadow-sm overflow-hidden hover:shadow-md"
+              className="bg-white border rounded-lg shadow-sm overflow-hidden hover:shadow-md flex flex-col"
             >
+              {/* Platzhalter-Bild: erster Buchstabe */}
               <div className="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
                 <div className="text-4xl font-bold text-gray-300">
                   {item.name.charAt(0)}
                 </div>
               </div>
-              <div className="p-4">
+              <div className="p-4 flex-1 flex flex-col">
+                {/* Name und Typ-Badge */}
                 <div className="flex items-start justify-between mb-2">
                   <h3 className="text-lg font-semibold">{item.name}</h3>
                   <span
@@ -120,15 +125,34 @@ export default function ShopPage() {
                     {typeLabels[item.type]}
                   </span>
                 </div>
-                <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                {/* Beschreibung */}
+                <p className="text-gray-600 text-sm mb-2 line-clamp-2">
                   {item.description}
                 </p>
-                <div className="text-sm text-gray-500 mb-4">
-                  <p className="line-clamp-2">{item.effects}</p>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="font-bold">${item.price.toFixed(2)}</div>
-                  <button className="bg-black text-white px-4 py-2 rounded text-sm hover:bg-gray-800 flex items-center">
+                {/* Effekte (falls vorhanden) */}
+                {item.effects && (
+                  <p className="text-sm text-gray-500 mb-2 line-clamp-2">
+                    Wirkungen: {item.effects}
+                  </p>
+                )}
+                {/* Verfügbarkeit */}
+                <p className="text-sm mb-4">
+                  <span className="font-medium">Verfügbar:</span>{" "}
+                  {item.available ? "Ja" : "Nein"}
+                </p>
+                {/* Preis und Button am unteren Rand */}
+                <div className="mt-auto flex items-center justify-between">
+                  <div className="font-bold text-lg">
+                    {item.price.toFixed(2)} €
+                  </div>
+                  <button
+                    className={`px-4 py-2 rounded text-sm flex items-center ${
+                      item.available
+                        ? "bg-black text-white hover:bg-gray-800"
+                        : "bg-gray-300 text-gray-600 cursor-not-allowed"
+                    }`}
+                    disabled={!item.available}
+                  >
                     <ShoppingCart className="mr-2 h-4 w-4" />
                     Add to Cart
                   </button>
