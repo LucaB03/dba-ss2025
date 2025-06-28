@@ -63,7 +63,6 @@ model KUNDE {
   nachname      String                 @db.VarChar
   titel         String                 @db.VarChar
   geburtsdatum  DateTime               @db.Date
-  adresse       Unsupported("adresse")
   BENUTZERKONTO BENUTZERKONTO[]
 }
 
