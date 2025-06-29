@@ -2,11 +2,19 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Package, ShoppingBag, Gift, Calendar } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 export default function InventoryPage() {
   const [activeTab, setActiveTab] = useState("all")
+  const router = useRouter()
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && !localStorage.getItem("userId")) {
+      router.push("/login")
+    }
+  }, [router])
 
   const items = [
     {

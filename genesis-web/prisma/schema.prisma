@@ -1,0 +1,130 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model ARTIKEL {
+  artikel_id        Int                               @id @unique @default(autoincrement())
+  bezeichnung       String                            @db.VarChar
+  spielauswirkungen Unsupported("spielauswirkungen")?
+  beschreibung      String                            @db.VarChar
+  typ               artikel_typ
+  preis             Float
+  verfuegbar        Boolean
+}
+
+model BENUTZERKONTO {
+  benutzerkonto_id Int            @id @unique @default(autoincrement())
+  kunde_id         Int
+  email            String         @unique @db.VarChar
+  passwort_hash    String         @db.VarChar
+  erstellt         DateTime       @default(now()) @db.Timestamptz(6)
+  rolle            benutzer_rolle @default(user)
+  KUNDE            KUNDE          @relation(fields: [kunde_id], references: [kunde_id], onDelete: NoAction, onUpdate: NoAction)
+  BESTELLUNG       BESTELLUNG[]
+  SPIELERPROFIL    SPIELERPROFIL?
+}
+
+model BESTELLUNG {
+  bestellung_id    Int                               @id @unique @default(autoincrement())
+  benutzerkonto_id Int?
+  spielerprofil_id Int?
+  bestelldatum     DateTime                          @db.Date
+  status           bestellung_status                 @default(offen)
+  positionen       Unsupported("_artikelposition")[]
+  BENUTZERKONTO    BENUTZERKONTO?                    @relation(fields: [benutzerkonto_id], references: [benutzerkonto_id], onDelete: NoAction, onUpdate: NoAction)
+  SPIELERPROFIL    SPIELERPROFIL?                    @relation(fields: [spielerprofil_id], references: [spielerprofil_id], onDelete: NoAction, onUpdate: NoAction)
+  RETOURE          RETOURE[]
+  ZAHLUNG          ZAHLUNG[]
+}
+
+model FREUNDSCHAFTEN {
+  spielerprofil_1_id                                             Int
+  spielerprofil_2_id                                             Int
+  SPIELERPROFIL_FREUNDSCHAFTEN_spielerprofil_1_idToSPIELERPROFIL SPIELERPROFIL @relation("FREUNDSCHAFTEN_spielerprofil_1_idToSPIELERPROFIL", fields: [spielerprofil_1_id], references: [spielerprofil_id], onDelete: NoAction, onUpdate: NoAction)
+  SPIELERPROFIL_FREUNDSCHAFTEN_spielerprofil_2_idToSPIELERPROFIL SPIELERPROFIL @relation("FREUNDSCHAFTEN_spielerprofil_2_idToSPIELERPROFIL", fields: [spielerprofil_2_id], references: [spielerprofil_id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([spielerprofil_1_id, spielerprofil_2_id])
+}
+
+model INVENTAR {
+  inventar_id   Int                               @id @unique @default(autoincrement())
+  positionen    Unsupported("_artikelposition")[]
+  SPIELERPROFIL SPIELERPROFIL?
+}
+
+model KUNDE {
+  kunde_id      Int                    @id @unique @default(autoincrement())
+  vorname       String                 @db.VarChar
+  nachname      String                 @db.VarChar
+  titel         String                 @db.VarChar
+  geburtsdatum  DateTime               @db.Date
+  BENUTZERKONTO BENUTZERKONTO[]
+}
+
+model RETOURE {
+  retoure_id        Int                               @id @unique @default(autoincrement())
+  bestellung_id     Int
+  retouredatum      DateTime                          @db.Date
+  grund             String?                           @db.VarChar
+  erstattungsbetrag Float
+  positionen        Unsupported("_artikelposition")[]
+  BESTELLUNG        BESTELLUNG                        @relation(fields: [bestellung_id], references: [bestellung_id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model SPIELERPROFIL {
+  spielerprofil_id                                                Int              @id @unique @default(autoincrement())
+  benutzerkonto_id                                                Int              @unique
+  inventar_id                                                     Int              @unique
+  anzeigename                                                     String           @db.VarChar
+  pokecoins                                                       Int              @default(0)
+  profilbild_url                                                  String?          @db.VarChar
+  siege                                                           Int              @default(0) @db.SmallInt
+  niederlagen                                                     Int              @default(0) @db.SmallInt
+  profilbeschreibung                                              String?          @db.VarChar
+  BESTELLUNG                                                      BESTELLUNG[]
+  FREUNDSCHAFTEN_FREUNDSCHAFTEN_spielerprofil_1_idToSPIELERPROFIL FREUNDSCHAFTEN[] @relation("FREUNDSCHAFTEN_spielerprofil_1_idToSPIELERPROFIL")
+  FREUNDSCHAFTEN_FREUNDSCHAFTEN_spielerprofil_2_idToSPIELERPROFIL FREUNDSCHAFTEN[] @relation("FREUNDSCHAFTEN_spielerprofil_2_idToSPIELERPROFIL")
+  BENUTZERKONTO                                                   BENUTZERKONTO    @relation(fields: [benutzerkonto_id], references: [benutzerkonto_id], onDelete: NoAction, onUpdate: NoAction)
+  INVENTAR                                                        INVENTAR         @relation(fields: [inventar_id], references: [inventar_id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model ZAHLUNG {
+  zahlung_id      Int             @id @unique @default(autoincrement())
+  bestellung_id   Int
+  betrag          Float
+  datum           DateTime        @db.Date
+  zahlungsmethode zahlungsmethode
+  BESTELLUNG      BESTELLUNG      @relation(fields: [bestellung_id], references: [bestellung_id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+enum artikel_typ {
+  digital
+  spielgegenstand
+  merchandise
+  abonnement
+}
+
+enum benutzer_rolle {
+  user
+  gs_developer
+  gs_admin
+}
+
+enum bestellung_status {
+  offen
+  verpackt
+  versandt
+  abgeschlossen
+}
+
+enum zahlungsmethode {
+  PayPal
+  Klarna
+  Sofortueberweisung
+  Kreditkarte
+}

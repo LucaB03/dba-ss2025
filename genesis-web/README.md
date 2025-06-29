@@ -5,13 +5,26 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 First, run the development server:
 
 ```bash
+# 1) Install dependencies (add “--force” if you run into conflicts)
+npm install --force
+
+# 2) Introspect your existing database schema
+npx prisma db pull
+
+# 3) Generate the Prisma Client
+npx prisma generate
+
+# 4) (Optional) If you change your schema, create & apply a migration:
+# npx prisma migrate dev --name init
+
+# 5) Start the development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# or with Yarn:
+# yarn dev
+# or with pnpm:
+# pnpm dev
+# or with Bun:
+# bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
