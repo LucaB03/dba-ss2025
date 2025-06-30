@@ -58,10 +58,16 @@ export default function Navbar() {
           </Link>
         </div>
 
-        <nav className="hidden md:flex gap-6">
+        <nav className="hidden md:flex items-center gap-6">
           <Link href="/" className="text-sm font-medium hover:underline underline-offset-4">
             Home
           </Link>
+          <div className="relative group flex items-center">
+            <span className="text-sm font-medium hover:underline underline-offset-4 cursor-pointer">Games</span>
+            <div className="absolute top-full left-0 mt-1 bg-white border rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+              <Link href="/mtg" className="block px-4 py-2 text-sm hover:bg-gray-100 whitespace-nowrap">Monster Tech Genesis</Link>
+            </div>
+          </div>
           <Link href="/shop" className="text-sm font-medium hover:underline underline-offset-4">
             Shop
           </Link>
@@ -115,6 +121,7 @@ export default function Navbar() {
             >
               Home
             </Link>
+            <Link href="/mtg" className="text-sm font-medium hover:underline underline-offset-4">Monster Tech Genesis</Link>
             <Link
               href="/shop"
               className="text-sm font-medium hover:underline underline-offset-4"
