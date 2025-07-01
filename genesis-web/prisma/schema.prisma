@@ -73,7 +73,7 @@ model RETOURE {
   retouredatum      DateTime                          @db.Date
   grund             String?                           @db.VarChar
   erstattungsbetrag Float
-  positionen        Unsupported("_artikelposition")[]
+  positionen        String[]
   BESTELLUNG        BESTELLUNG                        @relation(fields: [bestellung_id], references: [bestellung_id], onDelete: NoAction, onUpdate: NoAction)
 }
 

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Package, ArrowRight, RefreshCcw } from "lucide-react";
 import Link from "next/link";
 
+// Typen
 type OrderPosition = {
   artikelId: number;
   quantity: number;
@@ -12,8 +13,7 @@ type Bestellung = {
   id: number;
   bestelldatum: string;
   status: "offen" | "verpackt" | "versandt" | "abgeschlossen";
-  positionen: OrderPosition[];
-  // wir berechnen total und items nach dem Fetch
+  positionen?: OrderPosition[];
 };
 
 export default function OrdersPage() {
@@ -24,15 +24,26 @@ export default function OrdersPage() {
   useEffect(() => {
     (async () => {
       try {
-        const res = await fetch("/api/bestellung");
-        if (!res.ok) {
-          console.error("API-Fehler:", res.status, await res.text());
+        const userId = localStorage.getItem("userId");
+        if (!userId) {
+          setOrders([]);
+          setLoading(false);
           return;
         }
-        const data = (await res.json()) as Bestellung[];
+        const res = await fetch("/api/bestellung", {
+          headers: { "x-user-id": userId }
+        });
+        if (!res.ok) {
+          console.error("API-Fehler:", res.status, await res.text());
+          setOrders([]);
+          setLoading(false);
+          return;
+        }
+        const data = await res.json();
         setOrders(data);
       } catch (err) {
         console.error("Fetch-Error:", err);
+        setOrders([]);
       } finally {
         setLoading(false);
       }
@@ -102,18 +113,21 @@ export default function OrdersPage() {
 
         {/* Order Cards */}
         <div className="space-y-6">
-          {filtered.map((order) => {
-            // baue items-Array aus positionen zusammen:
-            const items = order.positionen.map((pos) => ({
-              id: pos.artikelId,
-              name: `Artikel #${pos.artikelId}`, // ggf. später durch fetch /api/artikel/:id ersetzen
-              quantity: pos.quantity,
-              price: 0 // falls Price fehlt, könnte man hier nachladen
-            }));
-            const total = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
+          {filtered.map((order, i) => {
+            // Positionen ist optional!
+            const items = Array.isArray(order.positionen)
+              ? order.positionen.map((pos) => ({
+                  id: pos.artikelId,
+                  name: `Artikel #${pos.artikelId}`,
+                  quantity: pos.quantity,
+                  price: 0 // ggf. später durch Artikel-Fetch ersetzen
+                }))
+              : [];
+
+            const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
             return (
-              <div key={order.id} className="bg-white border rounded-lg shadow-sm">
+              <div key={order.id ?? i} className="bg-white border rounded-lg shadow-sm">
                 {/* Order Header */}
                 <div className="p-4 pb-2">
                   <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
@@ -145,15 +159,23 @@ export default function OrdersPage() {
                         </tr>
                       </thead>
                       <tbody>
-                        {items.map((item) => (
-                          <tr key={item.id} className="border-b">
-                            <td className="py-2">{item.name}</td>
-                            <td className="text-right py-2">{item.quantity}</td>
-                            <td className="text-right py-2">
-                              €{item.price.toFixed(2)}
+                        {items.length > 0 ? (
+                          items.map((item) => (
+                            <tr key={item.id} className="border-b">
+                              <td className="py-2">{item.name}</td>
+                              <td className="text-right py-2">{item.quantity}</td>
+                              <td className="text-right py-2">
+                                €{item.price.toFixed(2)}
+                              </td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan={3} className="text-center text-gray-400 py-6">
+                              Keine Artikel
                             </td>
                           </tr>
-                        ))}
+                        )}
                         <tr>
                           <td colSpan={2} className="text-right font-bold py-2">
                             Total
