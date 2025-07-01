@@ -1,7 +1,7 @@
-// app/shop/ShopClient.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { ShoppingCart, X } from "lucide-react";
 
 export type Artikel = {
@@ -20,13 +20,44 @@ export default function ShopClient({
 }) {
   const [activeTab, setActiveTab] = useState<Artikel["type"] | "all">("all");
   const [items] = useState<Artikel[]>(initialItems);
+  const [userId, setUserId] = useState<string | null>(null);
+  const router = useRouter();
+
+  // Load user session from localStorage
+  useEffect(() => {
+    const stored = localStorage.getItem("userId");
+    setUserId(stored);
+  }, []);
+
+  function addToCart(item: Artikel) {
+    if (!userId) {
+      router.push("/login");
+      return;
+    }
+
+    const raw = localStorage.getItem("cart");
+    let current: Artikel[] = [];
+    try {
+      if (raw) current = JSON.parse(raw);
+    } catch {}
+
+    const existing = current.find((i) => i.id === item.id);
+    if (existing) {
+      existing.quantity = (existing as any).quantity + 1 || 2;
+    } else {
+      (item as any).quantity = 1;
+      current.push(item);
+    }
+
+    localStorage.setItem("cart", JSON.stringify(current));
+  }
 
   const tabs = [
-    { id: "all",             label: "All Items" },
-    { id: "digital",         label: "Digital"   },
+    { id: "all", label: "All Items" },
+    { id: "digital", label: "Digital" },
     { id: "spielgegenstand", label: "Game Objects" },
-    { id: "merchandise",     label: "Merchandise" },
-    { id: "abonnement",      label: "Subscriptions" },
+    { id: "merchandise", label: "Merchandise" },
+    { id: "abonnement", label: "Subscriptions" },
   ] as const;
 
   const filteredItems =
@@ -35,19 +66,18 @@ export default function ShopClient({
       : items.filter((item) => item.type === activeTab);
 
   const typeLabels: Record<Artikel["type"], string> = {
-    digital:        "Digital",
-    spielgegenstand:"Game Object",
-    merchandise:    "Merchandise",
-    abonnement:     "Subscription",
+    digital: "Digital",
+    spielgegenstand: "Game Object",
+    merchandise: "Merchandise",
+    abonnement: "Subscription",
   };
 
   const typeColors: Record<Artikel["type"], string> = {
-    digital:        "bg-blue-100 text-blue-800",
-    spielgegenstand:"bg-green-100 text-green-800",
-    merchandise:    "bg-purple-100 text-purple-800",
-    abonnement:     "bg-amber-100 text-amber-800",
+    digital: "bg-blue-100 text-blue-800",
+    spielgegenstand: "bg-green-100 text-green-800",
+    merchandise: "bg-purple-100 text-purple-800",
+    abonnement: "bg-amber-100 text-amber-800",
   };
-
   return (
     <div className="container mx-auto py-8 px-4">
       {/* Header */}
@@ -77,7 +107,7 @@ export default function ShopClient({
         ))}
       </div>
 
-      {/* Grid mit Boxen */}
+      {/* Grid mit Artikeln */}
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {filteredItems.map((item) => (
           <div
@@ -86,7 +116,7 @@ export default function ShopClient({
               !item.available ? "opacity-50" : ""
             }`}
           >
-            {/* Platzhalter-Bild mit X im Kreis */}
+            {/* Bildplatzhalter mit optionalem X */}
             <div className="aspect-square relative bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
               <div className="text-4xl font-bold text-gray-300">
                 {item.name.charAt(0)}
@@ -100,9 +130,8 @@ export default function ShopClient({
               )}
             </div>
 
-            {/* Inhalt */}
+            {/* Artikelinfos */}
             <div className="p-4 flex-1 flex flex-col">
-              {/* Name & Typ */}
               <div className="flex items-start justify-between mb-2">
                 <h3 className="text-lg font-semibold">{item.name}</h3>
                 <span
@@ -112,17 +141,17 @@ export default function ShopClient({
                 </span>
               </div>
 
-              {/* Beschreibung */}
               <p className="text-gray-600 text-sm mb-4 line-clamp-2">
                 {item.description}
               </p>
 
-              {/* Preis & Button */}
+              {/* Preis und Button */}
               <div className="mt-auto flex items-center justify-between">
                 <div className="font-bold text-lg">
                   {item.price.toFixed(2)} €
                 </div>
                 <button
+                  onClick={() => item.available && addToCart(item)}
                   className={`px-4 py-2 rounded text-sm flex items-center ${
                     item.available
                       ? "bg-black text-white hover:bg-gray-800"
@@ -135,7 +164,6 @@ export default function ShopClient({
                 </button>
               </div>
 
-              {/* Bald verfügbar */}
               {!item.available && (
                 <p className="mt-2 text-center text-sm text-gray-500">
                   Bald verfügbar
