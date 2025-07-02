@@ -73,7 +73,8 @@ model RETOURE {
   retouredatum      DateTime                          @db.Date
   grund             String?                           @db.VarChar
   erstattungsbetrag Float
-  positionen        String[]
+  positionen        Unsupported("_artikelposition")[]
+  status            retoure_status                    @default(offen)
   BESTELLUNG        BESTELLUNG                        @relation(fields: [bestellung_id], references: [bestellung_id], onDelete: NoAction, onUpdate: NoAction)
 }
 
@@ -128,4 +129,12 @@ enum zahlungsmethode {
   Klarna
   Sofortueberweisung
   Kreditkarte
+}
+
+enum retoure_status {
+  offen
+  akzeptiert
+  abgelehnt
+  inBearbeitung
+  abgeschlossen
 }

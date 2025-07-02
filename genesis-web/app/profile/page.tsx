@@ -15,7 +15,7 @@ import FriendsList from "@/components/FriendsList"
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState(null);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");
@@ -31,6 +31,8 @@ export default function ProfilePage() {
       .then((data) => {
         if (data.error) setError(data.error);
         else setProfile(data);
+        console.log("-----------------------------")
+        console.log(data);
       })
       .catch((e) => setError(e.message));
   }, []);
@@ -43,6 +45,7 @@ export default function ProfilePage() {
     return <div className="container mx-auto py-8 px-4">Lädt…</div>;
   }
 
+  //@ts-ignore
   const playerProfile = profile.profil;
   if (!playerProfile) {
     return (
@@ -55,9 +58,12 @@ export default function ProfilePage() {
     totalGames > 0 ? Math.round((playerProfile.siege / totalGames) * 100) : 0;
 
   // Extract account info fields from playerProfile
-  const email = profile.email;
-  const rolle = profile.rolle;
-  const erstellt = profile.erstellt;
+  //@ts-ignore
+  const email = profile.user.email;
+  //@ts-ignore
+  const rolle = profile.user.rolle;
+  //@ts-ignore
+  const erstellt = profile.user.erstellt;
 
   const data = [
     { name: "Wins", value: playerProfile.siege },
@@ -202,6 +208,42 @@ export default function ProfilePage() {
               <div>
                 <span className="font-medium">Erstellt:</span>{" "}
                 {new Date(erstellt).toLocaleString("de-DE")}
+              </div>
+              <div>
+                {/* @ts-ignore */}
+                <span className="font-medium">Titel:</span> {profile.user.KUNDE.titel}
+              </div>
+              <div>
+                {/* @ts-ignore */}
+                <span className="font-medium">Vorname:</span> {profile.user.KUNDE.vorname}
+              </div>
+              <div>
+                {/* @ts-ignore */}
+                <span className="font-medium">Nachname:</span> {profile.user.KUNDE.nachname}
+              </div>
+              <div>
+                {/* @ts-ignore */}
+                <span className="font-medium">Geburtsdatum:</span> {new Date(profile.user.KUNDE.geburtsdatum).toLocaleString("de-DE").split(",")[0]}
+              </div>
+              <div>
+                {/* @ts-ignore */}
+                <span className="font-medium">Straße:</span> {profile.user.KUNDE.adresse.strasse}
+              </div>
+              <div>
+                {/* @ts-ignore */}
+                <span className="font-medium">Hausnummer:</span> {profile.user.KUNDE.adresse.hausnummer}
+              </div>
+              <div>
+                {/* @ts-ignore */}
+                <span className="font-medium">Stadt:</span> {profile.user.KUNDE.adresse.stadt}
+              </div>
+              <div>
+                {/* @ts-ignore */}
+                <span className="font-medium">Postleitzahl:</span> {profile.user.KUNDE.adresse.postleitzahl}
+              </div>
+              <div>
+                {/* @ts-ignore */}
+                <span className="font-medium">Land:</span> {profile.user.KUNDE.adresse.land}
               </div>
             </div>
           </div>

@@ -96,6 +96,7 @@ export default function Navbar() {
               </button>
               <div className="absolute right-0 mt-2 w-32 bg-white border rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-50">
                 <Link href="/profile" className="block px-4 py-2 hover:bg-gray-100">Profil</Link>
+                <Link href="/returns" className="block px-4 py-2 hover:bg-gray-100">Retouren</Link> {/* TODO: Nur als admin sichtbar */}
                 <button onClick={handleLogout} className="w-full text-left px-4 py-2 hover:bg-gray-100">Ausloggen</button>
               </div>
             </div>
