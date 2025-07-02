@@ -44,6 +44,11 @@ export default function Footer() {
                   Orders
                 </Link>
               </li>
+              <li>
+                <Link href="/myreturns" className="text-gray-500 hover:text-gray-900">
+                  Return Form
+                </Link>
+              </li>
             </ul>
           </div>
           <div className="space-y-4">
