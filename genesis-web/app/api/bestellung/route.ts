@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prismadb";
 
 export async function GET(req: NextRequest) {
-  // Hol dir userId wie immer
+  // Hol dir userId
   const userId = req.headers.get("x-user-id");
   if (!userId) {
     return NextResponse.json({ error: "Keine userId angegeben" }, { status: 400 });
@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
     SELECT * FROM get_order_history(${Number(userId)}::int);
   `;
 
-  // positionen ggf. parsen
+  // positionen parsen
   const fixedOrders = orders.map(order => ({
     ...order,
     positionen: typeof order.positionen === "string"

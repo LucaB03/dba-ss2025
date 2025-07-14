@@ -70,7 +70,7 @@ export default function CartPage() {
           <div className="text-right">
             <button
               className="bg-black text-white px-6 py-3 rounded-md text-sm hover:bg-gray-800 transition"
-              onClick={() => alert("Checkout folgt bald")}
+              onClick={() => window.location.href = "/checkout"}
             >
               Zur Kasse
             </button>
