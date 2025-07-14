@@ -1,0 +1,83 @@
+CREATE OR REPLACE FUNCTION get_shop_items()
+RETURNS TABLE (
+  artikel_id INT,
+  bezeichnung VARCHAR,
+  beschreibung VARCHAR,
+  typ VARCHAR,
+  preis NUMERIC,
+  verfuegbar BOOLEAN
+) AS $$
+  SELECT artikel_id, bezeichnung, beschreibung, typ, preis, verfuegbar
+  FROM "ARTIKEL";
+$$ LANGUAGE sql;
+
+**----------------------------------------------------------------**
+CREATE OR REPLACE FUNCTION get_friends_for_profile(pid INT)
+RETURNS TABLE (
+  spielerprofil_id INT,
+  anzeigename VARCHAR,
+  profilbild_url VARCHAR
+) AS $$
+  SELECT s.spielerprofil_id, s.anzeigename, s.profilbild_url
+  FROM "FREUNDSCHAFTEN" f
+  JOIN "SPIELERPROFIL" s ON s.spielerprofil_id = f.spielerprofil_2_id
+  WHERE f.spielerprofil_1_id = pid
+
+  UNION
+
+  SELECT s.spielerprofil_id, s.anzeigename, s.profilbild_url
+  FROM "FREUNDSCHAFTEN" f
+  JOIN "SPIELERPROFIL" s ON s.spielerprofil_id = f.spielerprofil_1_id
+  WHERE f.spielerprofil_2_id = pid;
+$$ LANGUAGE sql;
+
+**----------------------------------------------------------------**
+CREATE OR REPLACE FUNCTION get_order_history(uid INT)
+RETURNS SETOF "BESTELLUNG" AS $$
+  SELECT * FROM "BESTELLUNG"
+  WHERE benutzerkonto_id = uid
+  ORDER BY bestelldatum DESC;
+$$ LANGUAGE sql;
+
+**----------------------------------------------------------------**
+CREATE OR REPLACE FUNCTION get_inventory_for_profile(pid INT)
+RETURNS TABLE (
+  artikel_id INT,
+  bezeichnung VARCHAR,
+  typ VARCHAR,
+  beschreibung VARCHAR
+) AS $$
+  SELECT
+    a.artikel_id,
+    a.bezeichnung,
+    a.typ,
+    a.beschreibung
+  FROM "INVENTAR" i,
+       LATERAL unnest(i.positionen) AS ap
+  JOIN "ARTIKEL" a ON a.artikel_id = ap.artikel_id
+  WHERE i.inventar_id = pid;
+$$ LANGUAGE sql;
+
+**----------------------------------------------------------------**
+CREATE OR REPLACE FUNCTION checkout_and_add_to_orders_and_inventory(
+  p_benutzerkonto_id INT,
+  p_spielerprofil_id INT,
+  p_inventar_id INT,
+  p_positionen artikelposition[],
+  p_status bestellung_status
+)
+RETURNS VOID AS $$
+DECLARE
+  neue_bestellung_id INT;
+BEGIN
+  INSERT INTO "BESTELLUNG" (bestelldatum, status, benutzerkonto_id, spielerprofil_id, positionen)
+  VALUES (NOW(), p_status, p_benutzerkonto_id, p_spielerprofil_id, p_positionen)
+  RETURNING bestellung_id INTO neue_bestellung_id;
+
+  UPDATE "INVENTAR"
+  SET positionen = positionen || p_positionen
+  WHERE inventar_id = p_inventar_id;
+END;
+$$ LANGUAGE plpgsql;
+
+**----------------------------------------------------------------**
