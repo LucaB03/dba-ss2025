@@ -15,30 +15,10 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Kein Spielerprofil gefunden" }, { status: 404 });
   }
 
-  // Hole alle Freundschaften, in denen dieses Profil vorkommt
-  const freundschaften = await prisma.fREUNDSCHAFTEN.findMany({
-    where: {
-      OR: [
-        { spielerprofil_1_id: eigenesProfil.spielerprofil_id },
-        { spielerprofil_2_id: eigenesProfil.spielerprofil_id }
-      ]
-    }
-  });
-
-  // Extrahiere die IDs der Freunde (immer der jeweils andere)
-  const freundIds = freundschaften.map(f =>
-    f.spielerprofil_1_id === eigenesProfil.spielerprofil_id
-      ? f.spielerprofil_2_id
-      : f.spielerprofil_1_id
-  );
-
-  // Hole die Profilinfos der Freunde
-  const freunde = freundIds.length
-    ? await prisma.sPIELERPROFIL.findMany({
-        where: { spielerprofil_id: { in: freundIds } },
-        select: { spielerprofil_id: true, anzeigename: true, profilbild_url: true }
-      })
-    : [];
+  // Rufe die Stored Procedure auf
+  const freunde = await prisma.$queryRaw`
+    SELECT * FROM get_friends_for_profile(${eigenesProfil.spielerprofil_id}::int);
+  `;
 
   return NextResponse.json({ freunde });
 }

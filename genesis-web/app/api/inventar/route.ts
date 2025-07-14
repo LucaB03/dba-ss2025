@@ -11,24 +11,22 @@ export async function GET(req: Request) {
   }
 
   try {
-    // Suche das Spielerprofil zum Benutzerkonto
+    // Spielerprofil holen
     const profil = await prisma.sPIELERPROFIL.findUnique({
       where: { benutzerkonto_id: parseInt(userId) },
-      include: {
-        INVENTAR: {
-          include: {
-            // Beispiel: Sobald Artikelrelationen bestehen, einbauen
-            // positionen: true,
-          },
-        },
-      },
+      select: { inventar_id: true },
     });
 
-    if (!profil || !profil.INVENTAR) {
+    if (!profil) {
       return NextResponse.json({ error: "Inventar nicht gefunden" }, { status: 404 });
     }
 
-    return NextResponse.json({ inventar: profil.INVENTAR });
+    // Stored Procedure aufrufen
+    const inventar = await prisma.$queryRaw`
+      SELECT * FROM get_inventory_for_profile(${profil.inventar_id}::int);
+    `;
+
+    return NextResponse.json({ inventar });
   } catch (err) {
     console.error("Inventar API Fehler:", err);
     return NextResponse.json({ error: "Serverfehler" }, { status: 500 });

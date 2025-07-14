@@ -1,65 +1,34 @@
 "use client"
 
 import type React from "react"
-
 import { useEffect, useState } from "react"
 import { Package, ShoppingBag, Gift, Calendar } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 export default function InventoryPage() {
   const [activeTab, setActiveTab] = useState("all")
+  const [items, setItems] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
   const router = useRouter()
 
   useEffect(() => {
-    if (typeof window !== "undefined" && !localStorage.getItem("userId")) {
-      router.push("/login")
+    if (typeof window !== "undefined") {
+      const userId = localStorage.getItem("userId")
+      if (!userId) {
+        router.push("/login")
+        return
+      }
+      fetch("/api/inventar", {
+        headers: { "x-user-id": userId },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          setItems(data.inventar || [])
+          setLoading(false)
+        })
+        .catch(() => setLoading(false))
     }
   }, [router])
-
-  const items = [
-    {
-      id: 1,
-      name: "Premium Skin Pack",
-      description: "Exclusive character skins for your player profile",
-      type: "digital",
-      quantity: 1,
-      effects: "Cosmetic changes to your character appearance",
-    },
-    {
-      id: 2,
-      name: "Power Boost",
-      description: "Temporary boost to your character's abilities",
-      type: "spielgegenstand",
-      quantity: 3,
-      effects: "+20% speed, +15% strength for 24 hours",
-    },
-    {
-      id: 3,
-      name: "Genesis T-Shirt",
-      description: "Official Genesis Studios merchandise",
-      type: "merchandise",
-      quantity: 1,
-      effects: "No in-game effects",
-      status: "Shipped",
-    },
-    {
-      id: 4,
-      name: "Pro Membership",
-      description: "Monthly subscription with premium benefits",
-      type: "abonnement",
-      quantity: 1,
-      effects: "Access to exclusive content, monthly item drops, ad-free experience",
-      expiresAt: "2023-12-31",
-    },
-    {
-      id: 5,
-      name: "Extra Lives Pack",
-      description: "Bundle of extra lives for challenging game modes",
-      type: "digital",
-      quantity: 10,
-      effects: "+10 extra lives in all game modes",
-    },
-  ]
 
   const tabs = [
     { id: "all", label: "All Items" },
@@ -69,7 +38,7 @@ export default function InventoryPage() {
     { id: "abonnement", label: "Subscriptions" },
   ]
 
-  const filteredItems = activeTab === "all" ? items : items.filter((item) => item.type === activeTab)
+  const filteredItems = activeTab === "all" ? items : items.filter((item) => item.typ === activeTab)
 
   const typeLabels: Record<string, string> = {
     digital: "Digital",
@@ -83,6 +52,10 @@ export default function InventoryPage() {
     spielgegenstand: <Package className="h-10 w-10 text-green-500" />,
     merchandise: <ShoppingBag className="h-10 w-10 text-purple-500" />,
     abonnement: <Calendar className="h-10 w-10 text-amber-500" />,
+  }
+
+  if (loading) {
+    return <div className="container mx-auto py-8 px-4">Lädt…</div>
   }
 
   return (
@@ -111,58 +84,24 @@ export default function InventoryPage() {
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {filteredItems.map((item) => (
-            <div key={item.id} className="bg-white border rounded-lg shadow-sm">
+            <div key={item.artikel_id} className="bg-white border rounded-lg shadow-sm">
               <div className="p-4 pb-2">
                 <div className="flex items-start justify-between">
                   <div className="space-y-1">
-                    <h3 className="text-lg font-semibold">{item.name}</h3>
-                    <p className="text-gray-600 text-sm">{item.description}</p>
+                    <h3 className="text-lg font-semibold">{item.bezeichnung}</h3>
+                    <p className="text-gray-600 text-sm">{item.beschreibung}</p>
                   </div>
-                  {typeIcons[item.type]}
+                  {typeIcons[item.typ]}
                 </div>
               </div>
               <div className="p-4">
                 <div className="grid gap-2">
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-500">Type:</span>
-                    <span className="font-medium">{typeLabels[item.type]}</span>
+                    <span className="font-medium">{typeLabels[item.typ]}</span>
                   </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-500">Quantity:</span>
-                    <span className="font-medium">{item.quantity}</span>
-                  </div>
-                  {item.expiresAt && (
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-500">Expires:</span>
-                      <span className="font-medium">{item.expiresAt}</span>
-                    </div>
-                  )}
-                  {item.status && (
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-500">Status:</span>
-                      <span className="font-medium">{item.status}</span>
-                    </div>
-                  )}
-                  <div className="mt-2 text-sm text-gray-500">
-                    <p className="line-clamp-2">{item.effects}</p>
-                  </div>
+                  {/* Hier kannst du weitere Felder wie quantity, effects etc. ergänzen, falls sie im Inventar vorhanden sind */}
                 </div>
-              </div>
-              <div className="p-4 pt-0">
-                {item.type === "spielgegenstand" && (
-                  <button className="w-full bg-black text-white py-2 rounded hover:bg-gray-800">Use Item</button>
-                )}
-                {item.type === "digital" && (
-                  <button className="w-full bg-black text-white py-2 rounded hover:bg-gray-800">Activate</button>
-                )}
-                {item.type === "merchandise" && (
-                  <button className="w-full bg-black text-white py-2 rounded hover:bg-gray-800">Track Order</button>
-                )}
-                {item.type === "abonnement" && (
-                  <button className="w-full bg-black text-white py-2 rounded hover:bg-gray-800">
-                    Manage Subscription
-                  </button>
-                )}
               </div>
             </div>
           ))}

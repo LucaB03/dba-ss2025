@@ -9,10 +9,9 @@ export async function GET(req: NextRequest) {
   }
 
   // Hole Bestellungen aus der Datenbank
-  const orders = await prisma.bESTELLUNG.findMany({
-    where: { benutzerkonto_id: Number(userId) },
-    orderBy: { bestelldatum: "desc" }
-  });
+  const orders = await prisma.$queryRaw`
+    SELECT * FROM get_order_history(${Number(userId)}::int);
+  `;
 
   // positionen ggf. parsen
   const fixedOrders = orders.map(order => ({
