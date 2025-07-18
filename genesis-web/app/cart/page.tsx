@@ -4,15 +4,18 @@
 import { useEffect, useState } from "react";
 import { Trash2 } from "lucide-react";
 
+// Typen für Artikel im Warenkorb
 type Artikel = {
   id: number;
   name: string;
   price: number;
 };
 
+// Warenkorb-Seite
 export default function CartPage() {
   const [cartItems, setCartItems] = useState<Artikel[]>([]);
 
+  // Warenkorb aus dem Local Storage laden
   useEffect(() => {
     const storedCart = localStorage.getItem("cart");
     if (storedCart) {
@@ -27,6 +30,7 @@ export default function CartPage() {
     }
   }, []);
 
+  // Artikel aus dem Warenkorb entfernen
   function removeItem(id: number) {
     const updated = cartItems.filter(item => item.id !== id);
     setCartItems(updated);

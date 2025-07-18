@@ -5,12 +5,13 @@ import { Package, ArrowRight, RefreshCcw, User, Calendar, Euro } from "lucide-re
 import Link from "next/link"
 import { getAllOrders, updateOrderStatus } from "@/lib/actions"
 
-// Types
+// Typen für Bestellpositionen und Bestellungen
 type OrderPosition = {
   artikelId: number
   quantity: number
 }
 
+// Typen für Bestellungen mit Details
 type OrderWithDetails = {
   bestellung_id: number
   benutzerkonto_id: number | null
@@ -23,16 +24,19 @@ type OrderWithDetails = {
   totalAmount?: number
 }
 
+// Bestellungen-Seite
 export default function OrdersPage() {
   const [activeTab, setActiveTab] = useState<OrderWithDetails["status"] | "all">("all")
   const [orders, setOrders] = useState<OrderWithDetails[]>([])
   const [loading, setLoading] = useState(true)
   const [updatingStatus, setUpdatingStatus] = useState<number | null>(null)
 
+  // Bestellungen laden
   useEffect(() => {
     loadOrders()
   }, [])
 
+  // Bestellungen laden
   const loadOrders = async () => {
     try {
       setLoading(true)
@@ -46,6 +50,7 @@ export default function OrdersPage() {
     }
   }
 
+  // Status aktualisieren
   const handleStatusUpdate = async (bestellungId: number, newStatus: OrderWithDetails["status"]) => {
     try {
       setUpdatingStatus(bestellungId)
@@ -92,6 +97,7 @@ export default function OrdersPage() {
     )
   }
 
+  // Tabs für die Filterung
   const tabs = [
     { id: "all", label: "All Orders", count: orders.length },
     { id: "offen", label: "Open", count: orders.filter((o) => o.status === "offen").length },
@@ -100,6 +106,7 @@ export default function OrdersPage() {
     { id: "abgeschlossen", label: "Completed", count: orders.filter((o) => o.status === "abgeschlossen").length },
   ] as const
 
+  // Farben und Labels für die Status
   const statusColors: Record<OrderWithDetails["status"], string> = {
     offen: "bg-blue-100 text-blue-800 border-blue-200",
     verpackt: "bg-yellow-100 text-yellow-800 border-yellow-200",
@@ -107,6 +114,7 @@ export default function OrdersPage() {
     abgeschlossen: "bg-green-100 text-green-800 border-green-200",
   }
 
+  //  Labels für die Status
   const statusLabels: Record<OrderWithDetails["status"], string> = {
     offen: "Open",
     verpackt: "Packed",
@@ -114,6 +122,7 @@ export default function OrdersPage() {
     abgeschlossen: "Completed",
   }
 
+  // Nächster Status für die Bestellung
   const nextStatusMap: Record<OrderWithDetails["status"], OrderWithDetails["status"] | null> = {
     offen: "verpackt",
     verpackt: "versandt",
@@ -121,6 +130,7 @@ export default function OrdersPage() {
     abgeschlossen: null,
   }
 
+  // Filtere die Bestellungen basierend auf dem aktiven Tab
   const filtered = activeTab === "all" ? orders : orders.filter((o) => o.status === activeTab)
 
   return (

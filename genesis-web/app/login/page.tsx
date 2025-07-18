@@ -3,12 +3,14 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 
+// Login-Seite
 export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const router = useRouter()
 
+  // Formular absenden
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError("")
@@ -17,6 +19,7 @@ export default function LoginPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
     })
+    // Prüfen, ob die Anmeldung erfolgreich war
     const data = await res.json()
     if (data.success) {
       if (typeof window !== "undefined") {

@@ -6,12 +6,14 @@ import { Package, Truck } from "lucide-react"
 import { getReturns } from "@/lib/actions"
 import { AcceptDeclineButtons, StatusActionButtons } from "@/components/returns-client"
 
+// Seite für Shop-Administratoren zur Verwaltung von Rücksendungen
 export default async function ShopAdminReturns() {
     const returns = await getReturns()
 
     const incomingReturns = returns.filter((r) => r.status === "offen")
     const acceptedReturns = returns.filter((r) => ["akzeptiert", "inBearbeitung", "abgeschlossen"].includes(r.status))
 
+    // Funktion zum Erstellen von Status-Badges
     const getStatusBadge = (status: string) => {
         switch (status) {
             case "offen":
@@ -29,10 +31,12 @@ export default async function ShopAdminReturns() {
         }
     }
 
+    // Formatierungsfunktionen für Datum und Währung
     const formatDate = (date: Date) => {
         return new Intl.DateTimeFormat("de-DE").format(new Date(date))
     }
 
+    // Formatierung für Währungsbeträge
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat("de-DE", {
             style: "currency",

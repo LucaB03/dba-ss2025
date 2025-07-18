@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge"
 import { Play, Download } from "lucide-react"
 import Link from "next/link"
 
+// MTG Page
 export default function MTGPage() {
     return (
         <div className="min-h-screen bg-gradient-to-b from-red-500 via-blue-500 to-yellow-400">

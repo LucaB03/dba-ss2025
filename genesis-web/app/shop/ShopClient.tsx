@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ShoppingCart, X, Check } from "lucide-react";
 
-// ...Artikel type und ShopClient Props wie bisher
 
+// Typen für Shop-Artikel
 export default function ShopClient({ initialItems }) {
   const [activeTab, setActiveTab] = useState("all");
   const [items] = useState(initialItems);
@@ -17,11 +17,13 @@ export default function ShopClient({ initialItems }) {
   });
   const router = useRouter();
 
+  // User-ID aus dem Local Storage laden
   useEffect(() => {
     const stored = localStorage.getItem("userId");
     setUserId(stored);
   }, []);
 
+  // Artikel zum Warenkorb hinzufügen
   function addToCart(item) {
     if (!userId) {
       router.push("/login");
@@ -45,11 +47,12 @@ export default function ShopClient({ initialItems }) {
     setCartFeedback(item.id);
     setTimeout(() => setCartFeedback(null), 700);
 
-    // Toast-Notification
+    // Push-Notification
     setToast({ message: `"${item.name}" wurde zum Warenkorb hinzugefügt.`, visible: true });
     setTimeout(() => setToast((t) => ({ ...t, visible: false })), 2000);
   }
 
+  // Tabs für die Filterung
   const tabs = [
     { id: "all", label: "All Items" },
     { id: "digital", label: "Digital" },
@@ -58,9 +61,12 @@ export default function ShopClient({ initialItems }) {
     { id: "abonnement", label: "Subscriptions" },
   ];
 
+  // Gefilterte Artikel basierend auf dem aktiven Tab
   const filteredItems =
     activeTab === "all" ? items : items.filter((item) => item.type === activeTab);
 
+
+  // Labels und Farben für die Typen
   const typeLabels = {
     digital: "Digital",
     spielgegenstand: "Game Object",
@@ -68,6 +74,7 @@ export default function ShopClient({ initialItems }) {
     abonnement: "Subscription",
   };
 
+  // Farben für die Typen
   const typeColors = {
     digital: "bg-blue-100 text-blue-800",
     spielgegenstand: "bg-green-100 text-green-800",
@@ -75,7 +82,6 @@ export default function ShopClient({ initialItems }) {
     abonnement: "bg-amber-100 text-amber-800",
   };
 
-  // ----- RETURN START -----
   return (
     <div className="container mx-auto py-8 px-4">
       {/* Push-Notification oben rechts */}

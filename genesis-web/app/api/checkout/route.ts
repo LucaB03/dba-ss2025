@@ -7,15 +7,14 @@ export async function POST(req: NextRequest) {
 
   const { cart } = await req.json();
 
-  // Spielerprofil und Inventar holen
+  // Spielerprofil und Inventar aus der Datenbank holen
   const profil = await prisma.sPIELERPROFIL.findUnique({
     where: { benutzerkonto_id: Number(userId) },
     select: { inventar_id: true, spielerprofil_id: true },
   });
   if (!profil) return NextResponse.json({ error: "Kein Profil gefunden" }, { status: 404 });
 
-  // Status bestimmen: Wenn alle Artikel "merchandise" sind -> "offen", sonst "abgeschlossen"
-  // Hole die Artikeltypen aus der DB
+  // Status bestimmen und Artikelinformationen holen
   const artikelIds = cart.map(item => item.id);
   const artikel = await prisma.aRTIKEL.findMany({
     where: { artikel_id: { in: artikelIds } },

@@ -5,12 +5,15 @@ import { useEffect, useState } from "react"
 import { Package, ShoppingBag, Gift, Calendar } from "lucide-react"
 import { useRouter } from "next/navigation"
 
+
+// Typen für Inventarartikel
 export default function InventoryPage() {
   const [activeTab, setActiveTab] = useState("all")
   const [items, setItems] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const router = useRouter()
 
+  // Inventar laden
   useEffect(() => {
     if (typeof window !== "undefined") {
       const userId = localStorage.getItem("userId")
@@ -30,6 +33,7 @@ export default function InventoryPage() {
     }
   }, [router])
 
+  // Tabs für die Filterung
   const tabs = [
     { id: "all", label: "All Items" },
     { id: "digital", label: "Digital" },
@@ -40,6 +44,7 @@ export default function InventoryPage() {
 
   const filteredItems = activeTab === "all" ? items : items.filter((item) => item.typ === activeTab)
 
+  // Labels und Icons für die Typen
   const typeLabels: Record<string, string> = {
     digital: "Digital",
     spielgegenstand: "Game Object",
@@ -47,6 +52,7 @@ export default function InventoryPage() {
     abonnement: "Subscription",
   }
 
+  // Icons für die Typen
   const typeIcons: Record<string, React.ReactNode> = {
     digital: <Gift className="h-10 w-10 text-blue-500" />,
     spielgegenstand: <Package className="h-10 w-10 text-green-500" />,

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prismadb";
 import bcrypt from "bcrypt";
 
+// API-Route zum Registrieren eines neuen Benutzers
 export async function POST(req: NextRequest) {
   try {
     const { email, password, vorname, nachname, titel, geburtsdatum } = await req.json();
@@ -9,11 +10,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Alle Felder sind erforderlich" }, { status: 400 });
     }
 
+    // Überprüfen, ob die E-Mail bereits registriert ist
     const existing = await prisma.bENUTZERKONTO.findUnique({ where: { email } });
     if (existing) {
       return NextResponse.json({ error: "E-Mail ist bereits registriert" }, { status: 409 });
     }
 
+    // Neuen Kunden und Benutzer erstellen
     const kunde = await prisma.kUNDE.create({
       data: {
         vorname,
@@ -23,6 +26,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    // Passwort hashen
     const hash = await bcrypt.hash(password, 10);
     const user = await prisma.bENUTZERKONTO.create({
       data: {

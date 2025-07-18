@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Kein Spielerprofil gefunden" }, { status: 404 });
   }
 
-  // Rufe die Stored Procedure auf
+  // Rufe die Stored Procedure auf um die Freunde zu bekommen
   const freunde = await prisma.$queryRaw`
     SELECT * FROM get_friends_for_profile(${eigenesProfil.spielerprofil_id}::int);
   `;

@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+
+// Typen für das Profil
 import {
   Trophy,
   Medal,
@@ -13,10 +15,13 @@ import {
 } from "lucide-react";
 import FriendsList from "@/components/FriendsList"
 
+
+// Profilseite
 export default function ProfilePage() {
   const [profile, setProfile] = useState(null);
   const [error, setError] = useState("");
 
+  // Profil aus dem Backend laden
   useEffect(() => {
     const userId = localStorage.getItem("userId");
     if (!userId) {
@@ -45,7 +50,7 @@ export default function ProfilePage() {
     return <div className="container mx-auto py-8 px-4">Lädt…</div>;
   }
 
-  //@ts-ignore
+  // Spielerprofil extrahieren
   const playerProfile = profile.profil;
   if (!playerProfile) {
     return (
@@ -58,13 +63,11 @@ export default function ProfilePage() {
     totalGames > 0 ? Math.round((playerProfile.siege / totalGames) * 100) : 0;
 
   // Extract account info fields from playerProfile
-  //@ts-ignore
   const email = profile.user.email;
-  //@ts-ignore
   const rolle = profile.user.rolle;
-  //@ts-ignore
   const erstellt = profile.user.erstellt;
 
+  // Daten für die Statistik
   const data = [
     { name: "Wins", value: playerProfile.siege },
     { name: "Losses", value: playerProfile.niederlagen },

@@ -11,7 +11,7 @@ export async function GET(req: Request) {
   }
 
   try {
-    // Spielerprofil holen
+    // Spielerprofil aus der Datenbank holen
     const profil = await prisma.sPIELERPROFIL.findUnique({
       where: { benutzerkonto_id: parseInt(userId) },
       select: { inventar_id: true },
@@ -21,7 +21,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Inventar nicht gefunden" }, { status: 404 });
     }
 
-    // Stored Procedure aufrufen
+    // Stored Procedure aufrufen zur Abfrage des Inventars
     const inventar = await prisma.$queryRaw`
       SELECT * FROM get_inventory_for_profile(${profil.inventar_id}::int);
     `;

@@ -11,11 +11,14 @@ import { Toaster } from "@/components/ui/toaster"
 import { Package, ArrowLeft, CheckCircle } from "lucide-react"
 import { createReturn } from "@/lib/actions"
 
+
+// Seite für Kundenrücksendungen
 export default function CustomerReturns() {
     const { toast } = useToast()
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [isSubmitted, setIsSubmitted] = useState(false)
 
+    // Formular zum Einreichen einer Rücksendung
     const handleSubmit = async (formData: FormData) => {
         setIsSubmitting(true)
 

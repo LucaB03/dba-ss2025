@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
+// Typen für Zahlungsmethoden
 const paymentMethods = [
   { id: "PayPal", label: "PayPal" },
   { id: "Klarna", label: "Klarna" },
@@ -10,16 +11,19 @@ const paymentMethods = [
   { id: "Kreditkarte", label: "Kreditkarte" },
 ];
 
+// Checkout-Seite
 export default function CheckoutPage() {
   const [cart, setCart] = useState<any[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
   const router = useRouter();
 
+  // Warenkorb aus dem Local Storage laden
   useEffect(() => {
     const stored = localStorage.getItem("cart");
     if (stored) setCart(JSON.parse(stored));
   }, []);
 
+  // Zahlungsmethode auswählen und Bestellung abschließen
   async function handlePayment(method: string) {
     setSelected(method);
     const userId = localStorage.getItem("userId");
@@ -27,7 +31,7 @@ export default function CheckoutPage() {
       router.push("/login");
       return;
     }
-    // API-Call: Bestellung anlegen und Artikel ins Inventar buchen
+    // Bestellung anlegen und Artikel ins Inventar buchen
     const res = await fetch("/api/checkout", {
       method: "POST",
       headers: { "Content-Type": "application/json", "x-user-id": userId },

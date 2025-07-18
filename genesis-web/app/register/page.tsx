@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 
+// Registrierungsseite
 export default function RegisterPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -15,6 +16,7 @@ export default function RegisterPage() {
   const [success, setSuccess] = useState(false)
   const router = useRouter()
 
+  // Formular absenden
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError("")
@@ -24,6 +26,8 @@ export default function RegisterPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password, vorname, nachname, titel, geburtsdatum }),
     })
+
+    // Prüfen, ob die Registrierung erfolgreich war
     const data = await res.json()
     if (data.success) {
       setSuccess(true)
